@@ -77,4 +77,11 @@ final class TrainBoardJudgeTests: XCTestCase {
         let j = TrainBoardJudge(forward: ["横浜駅"], backward: [])
         XCTAssertEqual(j.judge(row: "各停　横浜 行"), .board(matched: "横浜"))
     }
+
+    func testShorterNameInsideLongerNameIsNotRead() {
+        // 目黒 방향이 맞고 中目黒 는 반대쪽일 때, "中目黒行" 은 반대쪽이다.
+        let j = TrainBoardJudge(forward: ["目黒", "白金台"], backward: ["中目黒", "赤羽岩淵"])
+        XCTAssertEqual(j.judge(row: "各停 中目黒行"), .wrongDirection(matched: "中目黒"))
+        XCTAssertEqual(j.judge(row: "各停 目黒行"), .board(matched: "目黒"))
+    }
 }

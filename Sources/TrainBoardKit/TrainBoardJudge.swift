@@ -78,11 +78,17 @@ public struct TrainBoardJudge: Sendable {
 
     public func judge(row: String) -> Verdict? {
         let norm = Self.normalize(row)
+        // Every marker on the row, minus those that are only part of a longer one
+        // that's also there: "中目黒行" contains 目黒, but it names 中目黒.
+        let all = forward.union(backward).union(nextStop).filter { !$0.isEmpty && norm.contains($0) }
+        let read = all.filter { short in !all.contains { $0.count > short.count && $0.contains(short) } }
         // The actual station name (from our marker sets) that was read — this is
         // what drove the verdict, shown to the rider so green/red isn't a mystery.
-        let fwdHit = forward.first { !$0.isEmpty && norm.contains($0) }
-        let bwdHit = backward.first { !$0.isEmpty && norm.contains($0) }
-        let nextHit = nextStop.first { !$0.isEmpty && norm.contains($0) }
+        // Longest first, so the shown name is the most specific one.
+        let byLength = read.sorted { $0.count > $1.count }
+        let fwdHit = byLength.first { forward.contains($0) }
+        let bwdHit = byLength.first { backward.contains($0) }
+        let nextHit = byLength.first { nextStop.contains($0) }
 
         // A valid destination wins: if any forward terminus/station is on the
         // row, it's going the right way (even if other text is present).
