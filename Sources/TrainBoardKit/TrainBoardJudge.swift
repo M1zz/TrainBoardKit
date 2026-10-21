@@ -129,7 +129,8 @@ public struct TrainBoardJudge: Sendable {
         for sep in [" ", "　", "·", "・", ",", "/"] {
             t = t.replacingOccurrences(of: sep, with: "")
         }
-        return t
+        // 市ヶ谷 / 市ケ谷: signs and data mix the small and full-size ke.
+        return t.replacingOccurrences(of: "ヶ", with: "ケ").replacingOccurrences(of: "ヵ", with: "カ")
     }
 
     /// Station marker: like `normalize`, plus a trailing "역" / "駅"

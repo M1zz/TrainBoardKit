@@ -84,4 +84,9 @@ final class TrainBoardJudgeTests: XCTestCase {
         XCTAssertEqual(j.judge(row: "各停 中目黒行"), .wrongDirection(matched: "中目黒"))
         XCTAssertEqual(j.judge(row: "各停 目黒行"), .board(matched: "目黒"))
     }
+
+    func testSmallAndFullSizeKeAreTheSame() {
+        let j = TrainBoardJudge(forward: ["市ヶ谷"], backward: [])
+        XCTAssertEqual(j.judge(row: "市ケ谷行"), .board(matched: "市ケ谷"))
+    }
 }
